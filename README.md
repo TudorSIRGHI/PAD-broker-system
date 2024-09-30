@@ -38,15 +38,6 @@ Here's a high-level breakdown of the proposed microservices:
     - Handles load creation, location details, cargo type, weight, and delivery requirements.
     - Provides functionalities for companies to post loads and specify preferences.
 
-3. **Load Matching Microservice (NodeJS):**
-    - Analyzes truck and load data to identify potential matches based on location, capacity, and cargo type.
-    - Utilizes algorithms and machine learning (optional) for efficient matching.
-
-4. **Communication Microservice (NodeJS):**
-    - Facilitates communication between companies and truck drivers through secure messaging.
-    - Enables negotiation of terms and booking confirmation.
-
-
 ## Technology Stack and Communication Patterns:
 
 **Java Microservices:**
