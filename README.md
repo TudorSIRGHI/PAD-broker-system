@@ -19,7 +19,7 @@ A microservices architecture is well-suited for this system due to several reaso
 
 ## Real-World Examples of Microservices Usage
 
-* **Maersk:**
+* **DAT:**
     - A leading logistics company, Maersk utilizes microservices for their logistics platform. This platform involves services for shipment tracking, container management, customs clearance, and cargo documentation. Each service operates independently, enabling Maersk to offer real-time visibility and improve supply chain efficiency.
 
 * **Flexport:**
@@ -28,28 +28,30 @@ A microservices architecture is well-suited for this system due to several reaso
 
 ## Service Boundaries:
 
+![Microservice Diagram](https://github.com/user-attachments/assets/da78e2d4-213a-4463-8130-97146ed674d7)
+
 Here's a high-level breakdown of the proposed microservices:
 
-1. **Load Management Microservice (Java):**
+1. **Load Management Microservice:**
    - Handles load creation, location details, cargo type, weight, and delivery requirements.
    - Provides functionalities for companies to post loads and specify preferences.
 
-2. **Communication Microservice (NodeJS):**
-    - Facilitates communication between companies and truck drivers through secure messaging.
-    - Enables negotiation of terms and booking confirmation.
+2. **Truck Management Microservice:**
+   - Manages truck registration, location tracking, driver details, and load capacity.
+   - Interfaces with GPS devices for real-time location updates.
 
 ## Technology Stack and Communication Patterns:
 
 **Java Microservices:**
 * Programming Language: Java
 * Framework: Spring Boot
-* Database: PostgreSQL
+* Database: MondoDB
 * Communication: REST APIs
 
 **NodeJS Microservice:**
-* Programming Language: JavaScript (NodeJS)
-* Framework: Express.js
-* Database: MongoDB (optional)
+* Programming Language: JavaScript
+* Framework: NodeJS
+* Database: MongoDB
 * Communication: REST APIs and WebSockets
 
 **Additional Considerations:**
