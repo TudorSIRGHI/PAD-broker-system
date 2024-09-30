@@ -30,9 +30,9 @@ A microservices architecture is well-suited for this system due to several reaso
 
 Here's a high-level breakdown of the proposed microservices:
 
-1. **Truck Management Microservice (Java):**
-    - Manages truck registration, location tracking, driver details, and load capacity.
-    - Interfaces with GPS devices for real-time location updates.
+1. **Load Management Microservice (Java):**
+   - Handles load creation, location details, cargo type, weight, and delivery requirements.
+   - Provides functionalities for companies to post loads and specify preferences.
 
 2. **Communication Microservice (NodeJS):**
     - Facilitates communication between companies and truck drivers through secure messaging.
