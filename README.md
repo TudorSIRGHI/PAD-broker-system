@@ -34,9 +34,9 @@ Here's a high-level breakdown of the proposed microservices:
     - Manages truck registration, location tracking, driver details, and load capacity.
     - Interfaces with GPS devices for real-time location updates.
 
-2. **Load Management Microservice (Java):**
-    - Handles load creation, location details, cargo type, weight, and delivery requirements.
-    - Provides functionalities for companies to post loads and specify preferences.
+2. **Communication Microservice (NodeJS):**
+    - Facilitates communication between companies and truck drivers through secure messaging.
+    - Enables negotiation of terms and booking confirmation.
 
 ## Technology Stack and Communication Patterns:
 
