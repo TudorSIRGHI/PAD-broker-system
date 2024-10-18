@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package dispatcher;
+
+service DispatcherService {
+  rpc OrderDispatcher (OrderRequest) returns (OrderResponse);
+}
+
+message OrderRequest {
+  string pointA = 1;
+  string pointB = 2;
+  double price = 3;
+  string products = 4;
+}
+
+message OrderResponse {
+  string _id = 1;
+  string pointA = 2;
+  string pointB = 3;
+  double price = 4;
+  string products = 5;
+}
