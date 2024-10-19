@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # Node.js Microservice 1
+  dispatcher:
+    image: dispatcher:latest  # Use the pre-built image named 'dispatcher'
+    container_name: dispatcher
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+    depends_on:
+      - mongo1
+      - redis
+    environment:
+      - MONGO_URL=mongodb://localhost:27017/MyDatabase  # Use the container name 'mongo1'
+      - REDIS_HOST=redis_server  # Use the container name 'redis_server'
+      - REDIS_PORT=6379
+
+  # Node.js Microservice 2
+  driver:
+    image: driver:latest  # Use the pre-built image named 'driver'
+    container_name: driver
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    depends_on:
+      - mongo2
+    environment:
+      - MONGO_URL=mongodb://localhost:27018/MyDatabase  # Use the container name 'mongo2'
+
+  # Java Gateway
+  gateway:
+    image: gateway:latest  # Use the pre-built image named 'gateway'
+    container_name: gateway
+    ports:
+      - "9898:9898"
+    networks:
+      - app-network
+    depends_on:
+      - driver
+      - dispatcher
+      - service-discovery
+
+  # Java Service Discovery
+  service-discovery:
+    image: service_discovery:latest  # Use the pre-built image named 'service-discovery'
+    container_name: service-discovery
+    ports:
+      - "8008:8008"
+    networks:
+      - app-network
+
+  mongo1:
+    image: mongo:5.0
+    container_name: mongo1
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+    volumes:
+      - mongo1-data:/data/db  # separate volume for mongo1
+
+  mongo2:
+    image: mongo:5.0
+    container_name: mongo2
+    ports:
+      - "27018:27018"
+    networks:
+      - app-network
+    volumes:
+      - mongo2-data:/data/db  # separate volume for mongo2
+
+  redis:
+    image: redis:7.0
+    container_name: redis_server
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+volumes:
+  mongo1-data:
+  mongo2-data:
+
+networks:
+  app-network:
+    driver: bridge
