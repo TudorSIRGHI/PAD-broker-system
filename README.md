@@ -1,108 +1,191 @@
-# PAD-broker-system
+# Transport Management Platform: Microservices-Based System
 
-## Brokerage System for Logistics Companies (Microservices with Java and NodeJS)
+## Overview
 
-This document outlines a microservices architecture for a brokerage system catering to logistics companies. The system tracks trucks and helps them find loads for efficient operations.
+The Transport Management Platform is a comprehensive system developed using microservices architecture to efficiently manage dispatcher and driver operations. This document provides an in-depth look at the platform's architecture, technology stack, data management, and deployment process.
 
-## Why Microservice Architecture is Suitable for a Logistics Brokerage System
+## Application Benefits
 
-A microservices architecture is well-suited for this system due to several reasons:
+The use of microservices architecture offers several key advantages:
+- **Scalability**: The platform is designed to scale individual services, such as **Dispatcher Management** and **Driver Management**, independently to handle varying loads. This modularity ensures resource optimization during high-traffic periods.
+- **Fault Isolation**: With microservices, an issue in one service (e.g., dispatcher operations) does not disrupt the entire platform, thus maintaining reliability.
+- **Enhanced Security**: Each service has distinct security measures, allowing granular control over access and protecting sensitive data.
+- **Real-Time Capabilities**: The integration of a **Lobby Mechanism** supported by WebSockets facilitates real-time interaction between dispatchers and drivers, enhancing responsiveness and user experience.
+- **Continuous Deployment**: Microservices enable quicker updates and isolated deployments, minimizing risk and accelerating development cycles.
 
-* **Complexity Management:** The system comprises distinct functionalities like truck management, load management, and matching. Each service can be developed and maintained independently, fostering better organization and modularity.
+## Service Boundary
 
-* **Scalability:** Different components might have varying resource demands. For instance, the Load Management service might handle a high influx of data during peak hours, while the Truck Management service might experience steady traffic. Microservices allow independent scaling based on specific needs, optimizing resource utilization.
+### Architecture Diagram
 
-* **Enhanced Development Speed and Agility:** Independent development, testing, and deployment of services lead to faster development cycles. This agility allows quicker adaptation to changing market demands or implementation of new features.
+![Microservice Diagram 2](https://github.com/user-attachments/assets/8883e8ea-cfe1-46bc-9d1d-579012d80a31)
 
-* **Fault Isolation:** If one service encounters an issue, it doesn't cripple the entire system. For example, a problem in the Load Matching service wouldn't affect Truck Management, ensuring system reliability and uptime.
+### Key Components
 
+- **API Gateway (Java)**: Serves as the entry point for client requests, directing them to the appropriate microservices via REST and balancing the load.
+- **Service Discovery (Java)**: Provides dynamic registration and discovery of microservices, enabling seamless gRPC communication between them.
+- **Dispatcher Management Microservice (Node.js)**: Manages dispatcher activities, including registration and order creation, with data stored in **MongoDB**.
+- **Driver Management Microservice (Node.js)**: Manages driver-related tasks, such as registration and order lookup, connected to its own **MongoDB** database.
+- **Redis Cache**: Deployed in a Docker container, it improves system performance by caching frequently requested data.
+- **ELK Stack (Elasticsearch, Logstash, Kibana)**: Used for centralized logging, monitoring, and visualization of system logs.
+- **ETL Service**: Extracts, transforms, and loads data into a **Data Warehouse (MongoDB)** for advanced reporting and analysis.
+- **Data Warehouse (MongoDB)**: Acts as the main repository for processed data, supporting data aggregation and business intelligence.
 
-## Real-World Examples of Microservices Usage
+## Technology Stack
 
-* **DAT:**
-    - A leading logistics company, Maersk utilizes microservices for their logistics platform. This platform involves services for shipment tracking, container management, customs clearance, and cargo documentation. Each service operates independently, enabling Maersk to offer real-time visibility and improve supply chain efficiency.
+### Programming Languages & Frameworks
+- **Java**: Used in the API Gateway and Service Discovery for efficient routing, load balancing, and service registration.
+- **Node.js**: Runs the Dispatcher and Driver Management Microservices with Express.js, providing a fast, non-blocking server environment.
 
-* **Flexport:**
-    - Flexport, a freight forwarding and logistics company, leverages a microservices architecture. Their platform encompasses services for booking shipments, managing documentation, tracking shipments, and interacting with customs authorities. This modular approach allows Flexport to rapidly adapt to new trade regulations and provide seamless freight forwarding services.
+ 
+### Communication & Service Discovery
+- **HTTP & REST**: Used for client-to-service communication, enabling lightweight, stateless interactions.
+- **WebSockets**: Supports real-time communication for interactive features such as dispatcher-driver updates.
+- **gRPC**: Ensures efficient inter-service communication with high performance and low latency.
+- **Eureka**: Employed for service registration and discovery, allowing services to find and interact with each other dynamically.
 
+### Databases & Storage
+- **MongoDB**: Utilized for both the Dispatcher and Driver Management databases for flexible and scalable data storage.
+- **Redis**: Provides a caching mechanism to enhance performance and reduce direct database queries.
 
-## Service Boundaries:
+### Containerization
+- **Docker**: Ensures consistency in deployment across environments with isolated containers for each service.
+- **Docker Compose**: Simplifies the orchestration of multi-container applications for easier deployment and scaling.
+### Monitoring & Data Processing
+- **ELK Stack**: Integrated for centralized logging and real-time monitoring, enabling quick issue detection and system analysis.
+- **ETL Service**: Responsible for the data pipeline that extracts, processes, and loads data into the **Data Warehouse**.
 
-![Microservice Diagram](https://github.com/user-attachments/assets/da78e2d4-213a-4463-8130-97146ed674d7)
+## Data Management
 
-Here's a high-level breakdown of the proposed microservices:
+### Database Structure
+Each microservice is paired with its own database, ensuring data isolation and autonomous management.
 
-1. **Load Management Microservice:**
-   - Handles load creation, location details, cargo type, weight, and delivery requirements.
-   - Provides functionalities for companies to post loads and specify preferences.
+#### Dispatcher Management Microservice
+- **Database**: MongoDB
+- **Sample Data Entry**:
+  ```json
+  {
+    "name": "NewUser",
+    "procent": "100",
+    "orderId": "66fef01d63576c466f16f186"
+  }
+  ```
 
-2. **Truck Management Microservice:**
-   - Manages truck registration, location tracking, driver details, and load capacity.
-   - Interfaces with GPS devices for real-time location updates.
+#### Driver Management Microservice
+- **Database**: MongoDB
+- **Sample Data Entry**:
+  ```json
+  {
+    "name": "NewUser",
+    "carNumber": "ABC123"
+  }
+  ```
 
-## Technology Stack and Communication Patterns:
+## API Overview
 
-**Java Microservices:**
-* Programming Language: Java
-* Framework: Spring Boot
-* Database: MondoDB
-* Communication: REST APIs
+### Dispatcher Management Endpoints
+1. **Register Dispatcher**
+   - **Endpoint**: `POST http://localhost:3001/dispatcher/register`
+   - **Request Body**:
+     ```json
+     {
+       "name": "NewUser",
+       "procent": "100",
+       "orderId": "66fef01d63576c466f16f186"
+     }
+     ```
 
-**NodeJS Microservice:**
-* Programming Language: JavaScript
-* Framework: NodeJS
-* Database: MongoDB
-* Communication: REST APIs and WebSockets
+2. **Create Order**
+   - **Endpoint**: `POST http://localhost:3001/dispatcher/order`
+   - **Request Body**:
+     ```json
+     {
+       "pointA": "Moldova",
+       "pointB": "Franta",
+       "price": 500,
+       "products": "Mere, Pere, Struguri"
+     }
+     ```
 
-**Additional Considerations:**
-* **Security:** Implement robust security measures to protect sensitive data (e.g., JWT authentication, authorization)
-* **Containerization:** Docker for packaging and deployment
-* **Monitoring:** Use tools like Prometheus and Grafana for system monitoring and logging
+### Driver Management Endpoints
+1. **Register Driver**
+   - **Endpoint**: `POST http://localhost:3000/driver/register`
+   - **Request Body**:
+     ```json
+     {
+       "name": "NewUser",
+       "carNumber": "ABC123"
+     }
+     ```
 
-## Design Data Management:
+2. **Find Order by ID**
+   - **Endpoint**: `POST http://localhost:3000/driver/findOrder/:id`
+   - **Path Parameter**: `id` - The ID of the order to search for.
 
-**Truck Entity (Java Microservice):**
+## Real-Time Communication
 
-```java
-public class Truck {
-  private Long id;
-  private String licensePlate;
-  private String driverName;
-  private Location currentLocation;
-  private double cargoCapacity;
-  // ... other attributes
-}
+The **Lobby Mechanism** enables real-time communication between dispatchers and drivers via WebSockets. This feature allows users to join, send messages, and leave virtual lobbies for seamless interaction and live updates.
+
+### WebSocket Events
+- **Join Lobby**
+  - **Event**: `joinLobby`
+  - **Payload**:
+    ```json
+    {
+      "lobbyName": "DeliveryGroup",
+      "username": "dispatcher01"
+    }
+    ```
+
+- **Send Message**
+  - **Event**: `message`
+  - **Payload**:
+    ```json
+    {
+      "message": "Order confirmed!",
+      "username": "dispatcher01"
+    }
+    ```
+
+- **Leave Lobby**
+  - **Event**: `leaveLobby`
+  - **Payload**:
+    ```json
+    {
+      "username": "dispatcher01"
+    }
+    ```
+
+## Deployment Guide
+
+### Run Services
+1. **Run MongoDB Containers**:
+   ```bash
+   docker run --name dispatcher -d -p 27017:27017 -v mongodata:/data/db_dispatcher mongo
+   docker run --name driver -d -p 27018:27017 -v mongodata:/data/db_driver mongo
+   ```
+
+2. **Run Redis Container**:
+   ```bash
+   docker run --name redis-container -d -p 6379:6379 redis:latest
+   ```
+
+3. **Deploy the Platform**:
+   ```bash
+   docker-compose up --build
+   ```
+
+### Verify Deployment
+Use the following commands to check service status:
+```bash
+curl http://localhost:3000/status
+curl http://localhost:3001/status
 ```
 
-**Load Entity (Java Microservice):**
-
-```java
-public class Load {
-  private Long id;
-  private String origin;
-  private String destination;
-  private String cargoType;
-  private double weight;
-  private String deliveryRequirements;
-  // ... other attributes
-}
+### Stop the Platform
+```bash
+docker-compose down
 ```
 
-## API Endpoints (Examples)
+## Logging and Monitoring
 
-**Truck Management Microservice (REST APIs):**
-
-* `POST /api/trucks`: Register a new truck.
-* `GET /api/trucks/{id}`: Get details of a specific truck.
-* `PUT /api/trucks/{id}`: Update truck information.
-* (Real-time location updates via separate mechanism)
-
-**Load Management Microservice (REST APIs):**
-
-* `POST /api/loads`: Create a new load.
-* `GET /api/loads/{id}`: Get details of a specific load.
-* `PUT /api/loads/{id}`: Update load information.
-
-**Load Matching Microservice (REST APIs and WebSockets):**
-
-* `POST /api/matching/request`:
+The platform's centralized logging and monitoring are managed with the **ELK Stack**, providing real-time insights and streamlined troubleshooting.
